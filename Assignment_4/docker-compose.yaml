@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=newsdb
+      - MONGO_APP_USERNAME=newsapp
+      - MONGO_APP_PASSWORD=newsapp_password
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - app_network
+    command: mongod --auth
+
+  rss_reader:
+    build:
+      context: ./rss_reader
+      dockerfile: Dockerfile
+    container_name: rss_reader
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=newsdb
+      - MONGO_APP_USERNAME=newsapp
+      - MONGO_APP_PASSWORD=newsapp_password
+      - RSS_FEED_URL=https://www.thehindu.com/news/national/feeder/default.rss
+      - RSS_SOURCE=The Hindu
+      - TITLE_PATH=title
+      - LINK_PATH=link
+      - SUMMARY_PATH=summary
+      - DATE_PATH=published_parsed
+      - IMAGE_URL_PATH=media_content/0/url
+      - POLL_INTERVAL=600
+      - MONGODB_STARTUP_DELAY=15
+    networks:
+      - app_network
+
+  web_app:
+    build:
+      context: ./web_app
+      dockerfile: Dockerfile
+    container_name: news_web_app
+    restart: always
+    depends_on:
+      - mongodb
+      - rss_reader
+    environment:
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_DB: newsdb
+      MONGO_APP_USERNAME: newsapp
+      MONGO_APP_PASSWORD: newsapp_password
+    ports:
+      - "5000:5000"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
