@@ -1,0 +1,58 @@
+stages:
+  pull_data:
+    cmd: python src/data/pull_data.py --version ${dataset_version} --seed ${random_seed}
+    deps:
+      - src/data/pull_data.py
+    params:
+      - random_seed
+      - dataset_version
+    outs:
+      - data/prepared
+
+  prepare_data:
+    cmd: python src/data/prepare_data.py --seed ${random_seed}
+    deps:
+      - src/data/prepare_data.py
+      - data/prepared
+    params:
+      - random_seed
+      - data.train_ratio
+      - data.val_ratio
+      - data.test_ratio
+    outs:
+      - data/train
+      - data/val
+      - data/test
+
+  train_model:
+    cmd: python src/models/train_model.py --seed ${random_seed}
+    deps:
+      - src/models/train_model.py
+      - data/train
+      - data/val
+    params:
+      - random_seed
+      - model
+      - hyperparameter_tuning
+    outs:
+      - models/best_model.keras
+    metrics:
+      - metrics/training_metrics.json:
+          cache: false
+
+  evaluate_model:
+    cmd: python src/evaluation/evaluate_model.py --seed ${random_seed}
+    deps:
+      - src/evaluation/evaluate_model.py
+      - models/best_model.keras
+      - data/test
+    params:
+      - random_seed
+    metrics:
+      - metrics/evaluation_metrics.json:
+          cache: false
+      - metrics/class_accuracies.json:
+          cache: false
+    outs:
+      - metrics/confusion_matrix.png:
+          cache: false 
