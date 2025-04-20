@@ -1,0 +1,32 @@
+name: handwriting-recognition
+
+conda_env: conda.yaml
+
+entry_points:
+  train:
+    parameters:
+      batch_size: {type: int, default: 16}
+      img_width: {type: int, default: 128}
+      img_height: {type: int, default: 32}
+      max_length: {type: int, default: 21}
+      epochs: {type: int, default: 100}
+      train_ratio: {type: float, default: 0.8}
+      val_ratio: {type: float, default: 0.1}
+      experiment_name: {type: string, default: "handwriting_recognition"}
+    command: "python handwriting_recognition.py --batch_size {batch_size} --img_width {img_width} --img_height {img_height} --max_length {max_length} --epochs {epochs} --train_ratio {train_ratio} --val_ratio {val_ratio} --experiment_name {experiment_name}"
+  
+  serve:
+    parameters:
+      model_uri: {type: string}
+      port: {type: int, default: 5000}
+      img_width: {type: int, default: 128}
+      img_height: {type: int, default: 32}
+    command: "python inference.py --model_uri {model_uri} --port {port} --img_width {img_width} --img_height {img_height}"
+
+  infer:
+    parameters:
+      model_uri: {type: string}
+      image_path: {type: string}
+      img_width: {type: int, default: 128}
+      img_height: {type: int, default: 32}
+    command: "python infer_command.py --model_uri {model_uri} --image_path {image_path} --img_width {img_width} --img_height {img_height}"
