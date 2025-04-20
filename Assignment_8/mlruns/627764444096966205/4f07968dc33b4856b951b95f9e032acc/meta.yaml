@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rohith-ramanan/Desktop/DA5402/assignment-08-iamthemarkjack/mlruns/627764444096966205/4f07968dc33b4856b951b95f9e032acc/artifacts
+end_time: 1744651650099
+entry_point_name: ''
+experiment_id: '627764444096966205'
+lifecycle_stage: active
+run_id: 4f07968dc33b4856b951b95f9e032acc
+run_name: handwriting_run_dc8e6e28
+run_uuid: 4f07968dc33b4856b951b95f9e032acc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744651635398
+status: 4
+tags: []
+user_id: rohith-ramanan
