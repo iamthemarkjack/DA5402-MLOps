@@ -1,0 +1,5 @@
+# Ignore logs
+/logs
+
+# Ignore data file
+/data/Gourmet_Foods.txt
