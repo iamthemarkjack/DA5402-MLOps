@@ -1,3 +1,6 @@
 # Ignore the __pycache__ folders
 Assignment_1/__pycache__/
 Assignment_3/__pycache__/
+
+# Ignore data
+Assignment_10/data/2017-07-14-bus-positions.csv
